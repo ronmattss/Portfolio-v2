@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  universal_io: ^2.0.4
   flutter:
     sdk: flutter
 
@@ -55,6 +56,10 @@ flutter:
   assets:
     - assets/gallery/
     - assets/gallery/Elden Ring/
+    - assets/gallery/Elden Ring/00.jpg
+    - assets/gallery/Elden Ring/01.jpg
+    - assets/gallery/Elden Ring/02.jpg
+    - assets/gallery/Elden Ring/03.jpg
 
 
   # The following line ensures that the Material Icons font is

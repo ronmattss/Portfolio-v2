@@ -16,6 +16,7 @@ class AlbumListWidget extends StatefulWidget {
 class _AlbumListWidgetState extends State<AlbumListWidget> {
   ImageLoader imageLoader = ImageLoader();
   List<String> imagePathList = [];
+  Map<String, List<String>> albumMap = {};
 
   @override
   void initState() {
@@ -25,59 +26,97 @@ class _AlbumListWidgetState extends State<AlbumListWidget> {
   }
 
   void loadImages() async {
-    var images =
-        await imageLoader.checkDirectoryIfExist(imageLoader.galleryPath);
-    print("Images " + images[1]);
-    setState(() {
-      // edit imagePathList
-      for(var image in images) {
-        print("Image " + StringHelper().replaceCharacter(image, '\\', '/'));
-        imagePathList.add(StringHelper().replaceCharacter(image, '\\', '/'));
-      }
-      print(imagePathList);
-    });
+    imagePathList = imageLoader.mappedImages.elementAt(0).keys.toList();
+    print(imagePathList.elementAt(0));
+    print(imageLoader.mappedImages.elementAt(0).entries.first.value.length);
+
+    // var images =
+    //     await imageLoader.checkDirectoryIfExist();
+    //  print("Images " + images[1]);
+    // setState(() {
+    //   // edit imagePathList
+    //   for (var image in images) {
+    //     print("Image " + StringHelper().replaceCharacter(image, '\\', '/'));
+    //     imagePathList.add(StringHelper().replaceCharacter(image, '\\', '/'));
+    //   }
+    //   print(imagePathList);
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     var x = MediaQuery.of(context).size.width;
-    var stringText = "Photos taken from different games";
-    return Container(color: Color(0x95B4B4B4),
-      width: MediaQuery.of(context).size.width, // width of the screen
-      height: MediaQuery.of(context).size.height, // height of the screen
-      child: ScrollConfiguration( behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: ListView.builder(
-            padding: const EdgeInsets.all(10),
-            itemCount: imagePathList.length +1,
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0 ) {
-                return SizedBox(
-                  height: 150,
-                  child: Center(
-                    child: Text(
-                      stringText,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                );
-              }
+    var stringText =
+        "Photos taken from different games ";
+    // final Future<List<String>>? future =
+    //     imageLoader.checkDirectoryIfExist(imageLoader.galleryPath);
 
+    return Container(
+        color: Color(0x95B4B4B4),
+        width: MediaQuery.of(context).size.width, // width of the screen
+        height: MediaQuery.of(context).size.height, // height of the screen
+        child:               SizedBox(
+    width: 700,
+    child: ListView.builder(
+      itemCount: imageLoader.mappedImages.elementAt(0).entries.first.value.length,
+      itemBuilder: (BuildContext context, int index) {
+        if (index == 0) {
+          return SizedBox(
+            height: 150,
+            child: Center(
+              child: Text(
+                stringText,
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.normal),
+              ),
+            ),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+                child: ImageContainerWidget(
+                  index: index,
+                  imagePath: imageLoader.mappedImages.elementAt(0).entries.first.value.elementAt(index-1),
+                  imageGalleryTitle: imagePathList.elementAt(0),
+                )),
+          );
+        }
+      },
+    )),
+    );
+  }
+}
+
+/*
+* ListView.builder(
+          itemCount: imagePathList.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return SizedBox(
+                height: 150,
+                child: Center(
+                  child: Text(
+                    stringText,
+                    style: TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              );
+            } else {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                     child: ImageContainerWidget(
-                  index: index,imagePath: imagePathList[index-1],imageGalleryTitle: "Elden Ring",
+                  index: index,
+                  imagePath: imagePathList[index - 1],
+                  imageGalleryTitle: "Elden Ring",
                 )),
               );
-            },
-
-            ),
-      ),
-
-    );
-  }
-}
+            }
+          },
+        ));
+* */
 
 class ImageContainerWidget extends StatefulWidget {
   final int index;
@@ -114,15 +153,15 @@ class _ImageContainerWidgetState extends State<ImageContainerWidget> {
             child: Row(children: [
               // every even number reverse it
               SizedBox(
-                width: 700,
-                  child: new Image.asset(widget.imagePath,
+                  width: 700,
+                  child: Image.asset(widget.imagePath,
                       fit: BoxFit.cover,
                       height: containerHeight,
-                      width: containerWidth)
-              ),
+                      width: containerWidth)),
               Expanded(
                 flex: 1,
-                child: Container( color: Colors.white,
+                child: Container(
+                  color: Colors.white,
                   width: 400,
                   padding: const EdgeInsets.only(top: 5),
                   child: Column(
@@ -156,7 +195,8 @@ class _ImageContainerWidgetState extends State<ImageContainerWidget> {
             child: Row(children: [
               Expanded(
                 flex: 1,
-                child: Container(color: Colors.white,
+                child: Container(
+                  color: Colors.white,
                   width: 400,
                   padding: const EdgeInsets.only(top: 5),
                   child: Column(
@@ -177,11 +217,10 @@ class _ImageContainerWidgetState extends State<ImageContainerWidget> {
               ),
               SizedBox(
                   width: 700,
-                  child: new Image.asset(widget.imagePath,
+                  child: new Image.network(widget.imagePath,
                       fit: BoxFit.cover,
                       height: containerHeight,
-                      width: containerWidth)
-              ),
+                      width: containerWidth)),
             ]),
           ),
         ));
